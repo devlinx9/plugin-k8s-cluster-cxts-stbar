@@ -1,21 +1,21 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
-    <id>co.com.devlinx9.pluging-k8s-statusbar</id>
+    <id>co.com.devlinx9.pluging-k8s-cluster-cxts-stbar</id>
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Pluging-k8s-statusbar</name>
+    <name>pluging-k8s-cluster-cxts-stbar</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">devlinx9</vendor>
+    <vendor email="devlinx9999@gmail.com">devlinx9</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    This plugin shows the current context for k8s clusters.<br>
+    <em>Also works to update de context using kubectl</em>
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
