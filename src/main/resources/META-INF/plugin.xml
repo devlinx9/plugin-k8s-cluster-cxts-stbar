@@ -8,7 +8,7 @@
     <name>Pluging-k8s-statusbar</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">YourCompany</vendor>
+    <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">devlinx9</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
@@ -25,8 +25,8 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <statusBarWidgetFactory id="buildNumberWidget"
+        <statusBarWidgetFactory id="contextK8sWidget"
                                 implementation="co.com.devlinx9.plugingk8sstatusbar.CurrentContextStatusBarWidgetFactory"
-                                order="before positionWidget"/>
+                                order="after writeActionWidget"/>
     </extensions>
 </idea-plugin>

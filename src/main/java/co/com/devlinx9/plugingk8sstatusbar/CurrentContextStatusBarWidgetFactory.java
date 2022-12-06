@@ -11,12 +11,12 @@ import org.jetbrains.annotations.NotNull;
 public class CurrentContextStatusBarWidgetFactory extends StatusBarEditorBasedWidgetFactory {
     @Override
     public @NonNls @NotNull String getId() {
-        return "FileName";
+        return "ClusterK8s";
     }
 
     @Override
     public @Nls @NotNull String getDisplayName() {
-        return "File Name";
+        return "Cluster k8s";
     }
 
     @Override
