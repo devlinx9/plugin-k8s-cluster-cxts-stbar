@@ -1,0 +1,1 @@
+rootProject.name = "pluging-k8s-statusbar"
