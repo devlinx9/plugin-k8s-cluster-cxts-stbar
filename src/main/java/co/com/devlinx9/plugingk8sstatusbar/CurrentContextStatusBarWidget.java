@@ -110,6 +110,8 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
 
     private List<String> getAllContextFromKubeFile() {
         var kubeConfig = loadKubeConfig();
+        text = kubeConfig.getCurrentContext();
+        myStatusBar.updateWidget(ID());
         List<String> contextsNames = new ArrayList<>();
         kubeConfig.getContexts().forEach(context -> {
             contextsNames.add(((LinkedHashMap) context).get("name").toString());
