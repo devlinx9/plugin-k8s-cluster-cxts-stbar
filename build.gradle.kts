@@ -1,13 +1,20 @@
 plugins {
     id("java")
     id("org.jetbrains.intellij") version "1.9.0"
+
 }
+
 
 group = "co.com.devlinx9"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+dependencies {
+    implementation("org.yaml:snakeyaml:1.33")
+    implementation("com.fasterxml.jackson:jackson-base:2.14.1")
 }
 
 // Configure Gradle IntelliJ Plugin

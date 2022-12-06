@@ -26,7 +26,7 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <statusBarWidgetFactory id="buildNumberWidget"
-                                implementation="co.com.devlinx9.plugingk8sstatusbar.FileNameStatusBarWidgetFactory"
+                                implementation="co.com.devlinx9.plugingk8sstatusbar.CurrentContextStatusBarWidgetFactory"
                                 order="before positionWidget"/>
     </extensions>
 </idea-plugin>

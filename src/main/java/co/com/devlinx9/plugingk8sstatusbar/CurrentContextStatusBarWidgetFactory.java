@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class FileNameStatusBarWidgetFactory extends StatusBarEditorBasedWidgetFactory {
+public class CurrentContextStatusBarWidgetFactory extends StatusBarEditorBasedWidgetFactory {
     @Override
     public @NonNls @NotNull String getId() {
         return "FileName";
@@ -21,7 +21,7 @@ public class FileNameStatusBarWidgetFactory extends StatusBarEditorBasedWidgetFa
 
     @Override
     public @NotNull StatusBarWidget createWidget(@NotNull Project project) {
-        return new FileNameStatusBarWidget(project);
+        return new CurrentContextStatusBarWidget(project);
     }
 
     @Override

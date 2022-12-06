@@ -1,5 +1,7 @@
 package co.com.devlinx9.plugingk8sstatusbar;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
@@ -9,29 +11,29 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.NlsContexts;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.VfsPresentationUtil;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.util.Consumer;
-import com.intellij.util.SlowOperations;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-class FileNameStatusBarWidget extends EditorBasedWidget implements StatusBarWidget.MultipleTextValuesPresentation {
+class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusBarWidget.MultipleTextValuesPresentation {
     private String text;
 
-    public FileNameStatusBarWidget(@NotNull Project project) {
+    public CurrentContextStatusBarWidget(@NotNull Project project) {
         super(project);
     }
 
@@ -78,31 +80,41 @@ class FileNameStatusBarWidget extends EditorBasedWidget implements StatusBarWidg
     }
 
     private String getCurrentContextFromKubeFile() {
-        String file = "/home/palfonso/.kube/config";
-        String currentContext = "None";
-
-        try (BufferedReader br
-                     = new BufferedReader(new FileReader(file))) {
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.contains("current-context: ")) {
-                    currentContext = line.replace("current-context: ", "");
-                    break;
-                }
-            }
-
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return currentContext;
+        var kubeConfig = loadKubeConfig();
+        return kubeConfig.getCurrentContext();
     }
 
-    private String getFileTitle(VirtualFile file) {
-        return SlowOperations.allowSlowOperations(() -> VfsPresentationUtil.getUniquePresentableNameForUI(myProject, file));
+    /**
+     * Load a Kubernetes config from a Reader
+     */
+    public static KubeConfig loadKubeConfig() {
+        Yaml yaml = new Yaml(new SafeConstructor());
+        Object config = null;
+        try {
+            config = yaml.load(new FileReader("/home/palfonso/.kube/config"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Map<String, Object> configMap = (Map<String, Object>) config;
+
+        String currentContext = (String) configMap.get("current-context");
+        ArrayList<Object> contexts = (ArrayList<Object>) configMap.get("contexts");
+        ArrayList<Object> clusters = (ArrayList<Object>) configMap.get("clusters");
+        ArrayList<Object> users = (ArrayList<Object>) configMap.get("users");
+//        Object preferences = configMap.get("preferences");
+
+        KubeConfig kubeConfig = new KubeConfig(currentContext, contexts, clusters, users);
+        System.out.println(kubeConfig);
+        return kubeConfig;
+    }
+
+    private List<String> getAllContextFromKubeFile() {
+        var kubeConfig = loadKubeConfig();
+        List<String> contextsNames = new ArrayList<>();
+        kubeConfig.getContexts().forEach(context -> {
+            contextsNames.add(((LinkedHashMap) context).get("name").toString());
+        });
+        return contextsNames;
     }
 
     @Override
@@ -115,9 +127,9 @@ class FileNameStatusBarWidget extends EditorBasedWidget implements StatusBarWidg
         return text;
     }
 
-    private static List<String> getSelectionHistory(FileEditorManagerImpl fileEditorManager) {
+    private List<String> getSelectionHistory(FileEditorManagerImpl fileEditorManager) {
 
-        return List.of("papsdf", "asdfasdfasdf");
+        return getAllContextFromKubeFile();
     }
 
     private class RecentFilesPopupStep extends BaseListPopupStep<String> {
