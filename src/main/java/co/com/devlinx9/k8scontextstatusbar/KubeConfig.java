@@ -1,4 +1,4 @@
-package co.com.devlinx9.plugingk8sstatusbar;
+package co.com.devlinx9.k8scontextstatusbar;
 
 import java.util.List;
 

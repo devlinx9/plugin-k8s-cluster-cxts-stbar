@@ -1,1 +1,1 @@
-rootProject.name = "pluging-k8s-statusbar"
+rootProject.name = "kubernetes-context-selector"

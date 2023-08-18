@@ -1,4 +1,4 @@
-package co.com.devlinx9.plugingk8sstatusbar;
+package co.com.devlinx9.k8scontextstatusbar;
 
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.project.DumbService;

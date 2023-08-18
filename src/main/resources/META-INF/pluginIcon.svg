@@ -1,12 +1,27 @@
-<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M32.0845 7.94025V4H24.0203V7.9896H16.029V4H7.91553V7.94025H4V36H16.0044V32.0045C16.0058 30.9457 16.4274 29.9308 17.1766 29.1826C17.9258 28.4345 18.9412 28.0143 20 28.0143C21.0588 28.0143 22.0743 28.4345 22.8234 29.1826C23.5726 29.9308 23.9942 30.9457 23.9956 32.0045V36H36V7.94025H32.0845Z"
-          fill="url(#paint0_linear)"/>
-    <defs>
-        <linearGradient id="paint0_linear" x1="2.94192" y1="4.89955" x2="37.7772" y2="39.7345"
-                        gradientUnits="userSpaceOnUse">
-            <stop offset="0.15937" stop-color="#3BEA62"/>
-            <stop offset="0.5404" stop-color="#3C99CC"/>
-            <stop offset="0.93739" stop-color="#6B57FF"/>
-        </linearGradient>
-    </defs>
+<svg width="40" height="40" version="1.1" viewBox="0 0 10.583 10.583" xmlns="http://www.w3.org/2000/svg">
+ <rect x="158.05" y="48.952" width=".6006" height="14.578" fill="#f00"/>
+ <g transform="matrix(.22049 0 0 .22049 -4.9893 -15.044)">
+  <rect x="22.629" y="68.23" width="48" height="48" fill="#008080" stroke-width=".26458"/>
+  <g transform="rotate(180 46.586 91.929)">
+   <g transform="matrix(.79999 0 0 .79999 20.599 5.2076)">
+    <g transform="rotate(7.741 -47.065 -388.68)">
+     <path d="m77.929 81.91a22.825 22.825 0 0 1 23.639-13.297 22.825 22.825 0 0 1 19.66 18.684" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2.165"/>
+     <path transform="matrix(.26458 0 0 .26458 -7.9459 -11.832)" d="m313.28 392.38-9.9557-48.707 47.159 15.732-18.602 16.488z" fill="#fff"/>
+     <path d="m77.929 81.91a22.825 22.825 0 0 1 23.639-13.297 22.825 22.825 0 0 1 19.66 18.684" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2.165"/>
+     <path transform="matrix(.26458 0 0 .26458 -7.9459 -11.832)" d="m313.28 392.38-9.9557-48.707 47.159 15.732-18.602 16.488z" fill="#fff"/>
+    </g>
+   </g>
+  </g>
+  <g transform="rotate(3.4241 46.66 84.98)">
+   <g transform="matrix(.79999 0 0 .79999 20.599 5.2076)">
+    <g transform="rotate(7.741 -47.065 -388.68)">
+     <path d="m77.929 81.91a22.825 22.825 0 0 1 23.639-13.297 22.825 22.825 0 0 1 19.66 18.684" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2.165"/>
+     <path transform="matrix(.26458 0 0 .26458 -7.9459 -11.832)" d="m313.28 392.38-9.9557-48.707 47.159 15.732-18.602 16.488z" fill="#fff"/>
+     <path d="m77.929 81.91a22.825 22.825 0 0 1 23.639-13.297 22.825 22.825 0 0 1 19.66 18.684" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2.165"/>
+     <path transform="matrix(.26458 0 0 .26458 -7.9459 -11.832)" d="m313.28 392.38-9.9557-48.707 47.159 15.732-18.602 16.488z" fill="#fff"/>
+    </g>
+   </g>
+  </g>
+  <path d="m40.174 78.639v26h14l-7.4347-13.573 7.4347-12.427z" fill="#fff"/>
+ </g>
 </svg>

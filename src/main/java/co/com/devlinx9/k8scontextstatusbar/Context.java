@@ -1,6 +1,4 @@
-package co.com.devlinx9.plugingk8sstatusbar;
-
-import java.util.List;
+package co.com.devlinx9.k8scontextstatusbar;
 
 public class Context {
    private String cluster;

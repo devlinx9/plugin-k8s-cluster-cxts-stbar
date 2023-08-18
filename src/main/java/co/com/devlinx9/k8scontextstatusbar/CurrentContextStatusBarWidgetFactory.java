@@ -1,4 +1,4 @@
-package co.com.devlinx9.plugingk8sstatusbar;
+package co.com.devlinx9.k8scontextstatusbar;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
