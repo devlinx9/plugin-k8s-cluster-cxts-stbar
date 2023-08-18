@@ -1,7 +1,6 @@
 package co.com.devlinx9.k8scontextstatusbar;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.impl.status.widget.StatusBarEditorBasedWidgetFactory;
 import org.jetbrains.annotations.Nls;
@@ -22,10 +21,5 @@ public class CurrentContextStatusBarWidgetFactory extends StatusBarEditorBasedWi
     @Override
     public @NotNull StatusBarWidget createWidget(@NotNull Project project) {
         return new CurrentContextStatusBarWidget(project);
-    }
-
-    @Override
-    public void disposeWidget(@NotNull StatusBarWidget widget) {
-        Disposer.dispose(widget);
     }
 }

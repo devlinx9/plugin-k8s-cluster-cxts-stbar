@@ -18,6 +18,13 @@
     <em>Also allows select and update the configured context in .kube/config file using kubectl (current-context)</em>
   ]]></description>
 
+    <change-notes>
+        <![CDATA[
+    This update consumes the .kube/config file in background<br>
+    </em>
+  ]]>
+    </change-notes>
+
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>

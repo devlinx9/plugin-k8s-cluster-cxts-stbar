@@ -1,26 +1,25 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.9.0"
+    id("org.jetbrains.intellij") version "1.15.0"
 
 }
 
 
 group = "co.com.devlinx9"
-version = "1.0.1"
-
+version = "2.0.0"
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("org.yaml:snakeyaml:1.33")
-    implementation("com.fasterxml.jackson:jackson-base:2.14.1")
+    implementation("org.yaml:snakeyaml:2.0")
+    implementation("com.fasterxml.jackson:jackson-base:2.15.2")
 }
 
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2022.1.4")
+    version.set("2023.2")
     type.set("IC") // Target IDE Platform
 
     plugins.set(listOf(/* Plugin Dependencies */))
@@ -29,13 +28,13 @@ intellij {
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
     }
 
     patchPluginXml {
-        sinceBuild.set("221")
-        untilBuild.set("231.*")
+        sinceBuild.set("231")
+        untilBuild.set("232.*")
     }
 
     signPlugin {

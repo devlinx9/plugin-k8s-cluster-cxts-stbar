@@ -1,6 +1,5 @@
 package co.com.devlinx9.k8scontextstatusbar;
 
-import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -11,22 +10,20 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget;
 import com.intellij.ui.popup.list.ListPopupImpl;
-import com.intellij.util.Consumer;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusBarWidget.MultipleTextValuesPresentation {
     private String text;
@@ -51,25 +48,20 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
     }
 
     @Override
-    public @Nullable Consumer<MouseEvent> getClickConsumer() {
-        return null;
-    }
-
-    @Override
     public void install(@NotNull StatusBar statusBar) {
         super.install(statusBar);
-        DumbService.getInstance(myProject).runWhenSmart(this::update);
+        DumbService.getInstance(getProject()).runWhenSmart(this::update);
+
+        AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(() -> {
+            System.out.println("Updating k8s context...");
+            update();
+            System.out.println("finished update");
+        }, 15, 45L, SECONDS);
     }
 
-    @Override
-    public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-        update();
-    }
-
-
-    private void update() {
+    public void update() {
         text = getCurrentContextFromKubeFile();
-        myStatusBar.updateWidget(ID());
+        Objects.requireNonNull(myStatusBar).updateWidget(ID());
     }
 
     private String getCurrentContextFromKubeFile() {
@@ -88,7 +80,7 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
         try {
             config = yaml.load(new FileReader(userHomeDir.concat(FileSystems.getDefault().getSeparator()).concat(configK8s)));
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new ContextK8sException(e);
         }
         Map<String, Object> configMap = (Map<String, Object>) config;
 
@@ -96,7 +88,6 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
         ArrayList<Object> contexts = (ArrayList<Object>) configMap.get("contexts");
         ArrayList<Object> clusters = (ArrayList<Object>) configMap.get("clusters");
         ArrayList<Object> users = (ArrayList<Object>) configMap.get("users");
-//        Object preferences = configMap.get("preferences");
 
         return new KubeConfig(currentContext, contexts, clusters, users);
     }
@@ -104,15 +95,15 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
     private List<String> getAllContextFromKubeFile() {
         var kubeConfig = loadKubeConfig();
         text = kubeConfig.getCurrentContext();
-        myStatusBar.updateWidget(ID());
+        Objects.requireNonNull(myStatusBar).updateWidget(ID());
         List<String> contextsNames = new ArrayList<>();
-        kubeConfig.getContexts().forEach(context -> contextsNames.add(((LinkedHashMap) context).get("name").toString()));
+        kubeConfig.getContexts().forEach(context -> contextsNames.add(((LinkedHashMap<?, ?>) context).get("name").toString()));
         return contextsNames;
     }
 
     @Override
-    public @Nullable("null means the widget is unable to show the popup") ListPopup getPopupStep() {
-        return new ListPopupImpl(myProject, new ContextsPopupStep());
+    public @Nullable("null means the widget is unable to show the popup") ListPopup getPopup() {
+        return new ListPopupImpl(getProject(), new ContextsPopupStep());
     }
 
     @Override
@@ -123,7 +114,7 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
     private class ContextsPopupStep extends BaseListPopupStep<String> {
 
         public ContextsPopupStep() {
-            super("K8s contexts", getAllContextFromKubeFile());
+            super("K8s Contexts", getAllContextFromKubeFile());
         }
 
         @Override
@@ -146,11 +137,11 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
                 int result = p.exitValue();
                 if (result != 0) {
                     System.out.println("kubectl command result: " + result);
-                    throw new RuntimeException("kubectl command failed");
+                    throw new ContextK8sException("kubectl command failed");
                 }
                 p.destroy();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new ContextK8sException(e);
             }
         }
     }
