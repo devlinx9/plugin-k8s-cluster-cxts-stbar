@@ -22,18 +22,25 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
 import java.util.*;
+import java.util.logging.Logger;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusBarWidget.MultipleTextValuesPresentation {
+
+    private static final Logger LOGGER =
+            Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+
     private String text;
 
-    public CurrentContextStatusBarWidget(@NotNull Project project) {
+    CurrentContextStatusBarWidget(@NotNull Project project) {
         super(project);
     }
 
     @Override
-    public @NonNls @NotNull String ID() {
+    public @NonNls
+    @NotNull String ID() {
         return "currentContextK8s";
     }
 
@@ -43,7 +50,8 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
     }
 
     @Override
-    public @Nullable @NlsContexts.Tooltip String getTooltipText() {
+    public @Nullable
+    @NlsContexts.Tooltip String getTooltipText() {
         return null;
     }
 
@@ -53,15 +61,17 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
         DumbService.getInstance(getProject()).runWhenSmart(this::update);
 
         AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(() -> {
-            System.out.println("Updating k8s context...");
+            LOGGER.info("Updating k8s context...");
             update();
-            System.out.println("finished update");
+            LOGGER.info("finished update");
         }, 15, 45L, SECONDS);
     }
 
     public void update() {
         text = getCurrentContextFromKubeFile();
-        Objects.requireNonNull(myStatusBar).updateWidget(ID());
+        if (myStatusBar != null) {
+            myStatusBar.updateWidget(ID());
+        }
     }
 
     private String getCurrentContextFromKubeFile() {
@@ -95,7 +105,9 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
     private List<String> getAllContextFromKubeFile() {
         var kubeConfig = loadKubeConfig();
         text = kubeConfig.getCurrentContext();
-        Objects.requireNonNull(myStatusBar).updateWidget(ID());
+        if (myStatusBar != null) {
+            myStatusBar.updateWidget(ID());
+        }
         List<String> contextsNames = new ArrayList<>();
         kubeConfig.getContexts().forEach(context -> contextsNames.add(((LinkedHashMap<?, ?>) context).get("name").toString()));
         return contextsNames;
@@ -107,13 +119,14 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
     }
 
     @Override
-    public @Nullable @NlsContexts.StatusBarText String getSelectedValue() {
+    public @Nullable
+    @NlsContexts.StatusBarText String getSelectedValue() {
         return text;
     }
 
     private class ContextsPopupStep extends BaseListPopupStep<String> {
 
-        public ContextsPopupStep() {
+        ContextsPopupStep() {
             super("K8s Contexts", getAllContextFromKubeFile());
         }
 
@@ -132,11 +145,11 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader(p.getInputStream()));
                 while ((s = br.readLine()) != null)
-                    System.out.println("line: " + s);
+                    LOGGER.info("line: " + s);
                 p.waitFor();
                 int result = p.exitValue();
                 if (result != 0) {
-                    System.out.println("kubectl command result: " + result);
+                    LOGGER.info("kubectl command result: " + result);
                     throw new ContextK8sException("kubectl command failed");
                 }
                 p.destroy();
