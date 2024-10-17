@@ -139,22 +139,29 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
 
         private void updateContextK8s(String context) {
             String s;
-            Process p;
+            Process p = null;
             try {
-                p = Runtime.getRuntime().exec("kubectl config use-context ".concat(context));
-                BufferedReader br = new BufferedReader(
-                        new InputStreamReader(p.getInputStream()));
-                while ((s = br.readLine()) != null)
+                // Use ProcessBuilder instead of Runtime.exec
+                ProcessBuilder processBuilder = new ProcessBuilder("kubectl", "config", "use-context", context);
+                processBuilder.redirectErrorStream(true); // Merge standard error with standard output
+                p = processBuilder.start();
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                while ((s = br.readLine()) != null) {
                     LOGGER.info("line: " + s);
-                p.waitFor();
-                int result = p.exitValue();
+                }
+
+                int result = p.waitFor(); // Wait for the process to finish
                 if (result != 0) {
                     LOGGER.info("kubectl command result: " + result);
                     throw new ContextK8sException("kubectl command failed");
                 }
-                p.destroy();
             } catch (Exception e) {
                 throw new ContextK8sException(e);
+            } finally {
+                if (p != null) {
+                    p.destroy(); // Ensure the process is destroyed
+                }
             }
         }
     }
