@@ -14,16 +14,14 @@ import com.intellij.util.concurrency.AppExecutorUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.nio.file.FileSystems;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
+import static co.com.devlinx9.k8scontextstatusbar.KubeUtils.loadKubeConfig;
+import static co.com.devlinx9.k8scontextstatusbar.KubeUtils.updateContextK8s;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusBarWidget.MultipleTextValuesPresentation {
@@ -79,29 +77,6 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
         return kubeConfig.getCurrentContext();
     }
 
-    /**
-     * Load a Kubernetes config from a Reader
-     */
-    private static KubeConfig loadKubeConfig() {
-        String userHomeDir = System.getProperty("user.home");
-        String configK8s = ".kube".concat(FileSystems.getDefault().getSeparator()).concat("config");
-        Yaml yaml = new Yaml();
-        Object config;
-        try {
-            config = yaml.load(new FileReader(userHomeDir.concat(FileSystems.getDefault().getSeparator()).concat(configK8s)));
-        } catch (FileNotFoundException e) {
-            throw new ContextK8sException(e);
-        }
-        Map<String, Object> configMap = (Map<String, Object>) config;
-
-        String currentContext = (String) configMap.get("current-context");
-        ArrayList<Object> contexts = (ArrayList<Object>) configMap.get("contexts");
-        ArrayList<Object> clusters = (ArrayList<Object>) configMap.get("clusters");
-        ArrayList<Object> users = (ArrayList<Object>) configMap.get("users");
-
-        return new KubeConfig(currentContext, contexts, clusters, users);
-    }
-
     private List<String> getAllContextFromKubeFile() {
         var kubeConfig = loadKubeConfig();
         text = kubeConfig.getCurrentContext();
@@ -136,35 +111,5 @@ class CurrentContextStatusBarWidget extends EditorBasedWidget implements StatusB
             update();
             return super.onChosen(selectedValue, finalChoice);
         }
-
-        private void updateContextK8s(String context) {
-            String s;
-            Process p = null;
-            try {
-                // Use ProcessBuilder instead of Runtime.exec
-                ProcessBuilder processBuilder = new ProcessBuilder("kubectl", "config", "use-context", context);
-                processBuilder.redirectErrorStream(true); // Merge standard error with standard output
-                p = processBuilder.start();
-
-                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                while ((s = br.readLine()) != null) {
-                    LOGGER.info("line: " + s);
-                }
-
-                int result = p.waitFor(); // Wait for the process to finish
-                if (result != 0) {
-                    LOGGER.info("kubectl command result: " + result);
-                    throw new ContextK8sException("kubectl command failed");
-                }
-            } catch (Exception e) {
-                throw new ContextK8sException(e);
-            } finally {
-                if (p != null) {
-                    p.destroy(); // Ensure the process is destroyed
-                }
-            }
-        }
     }
-
-
 }
